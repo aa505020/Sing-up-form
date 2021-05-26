@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+//using System.Data.commandType;
 
 namespace WinFormsApp1
 {
@@ -21,25 +22,37 @@ namespace WinFormsApp1
         SqlCommand cmd;
         private void button1_Click(object sender, EventArgs e)
         {
-
-
-
-            SqlConnection sqlcon = new SqlConnection(connition);
-            sqlcon.Open();
-            cmd = new SqlCommand("insert into Table_1 values('" + textBox1.Text + "','" + textBox2.Text + "','" +textBox3.Text + "')", sqlcon);
+            SqlConnection sql = new SqlConnection(connition);
+            sql.Open();
+            SqlCommand cmd = new SqlCommand("insert into Table_1 values ('" + textBox1.Text + "','" + textBox2.Text + "','" + textBox3.Text + "')",sql);
             cmd.ExecuteNonQuery();
-            MessageBox.Show(" Data Has saved in database ");
-            sqlcon.Close();
-            MessageBox.Show("data saved succefuly");
-        
+            MessageBox.Show("data saved");
+            sql.Close();
+            select();
         }
-
-
-
-
+        private void select()
+        {
+           
+            SqlConnection sqlc = new SqlConnection(connition);
+            sqlc.Open();
+            SqlCommand cmd =new SqlCommand("readData", sqlc);
+            cmd.CommandType= CommandType.StoredProcedure;
+           // SqlParameter[] par = new SqlParameter();
+            
+            SqlDataAdapter sqlaa = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            sqlaa.Fill(dt);
+            dataGridView1.DataSource = dt;
+            sqlc.Close();
+        }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void form_log_up_Load(object sender, EventArgs e)
+        {
+            select();
         }
     }
 }
